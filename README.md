@@ -103,28 +103,7 @@ Mount two remote targets, install event-based zpool recovery scripts and a CARP-
 
 ## Testing
 
-This role provides a `Vagrantfile` and a `Makefile`.
-
-``` bash
-# Makefile-provided commands
-$ make help
-help                This help message
-lint                Test YAML syntax
-vagrant-destroy     Destroy vagrant boxes
-vagrant-variables   Test vagrant env variables
-vagrant-vbox        Test the playbook using vagrant and virtualbox
-# Mandatory variables
-$ export VAGRANT_BOX_NAME="my-box"
-# Optionnal variables
-$ export VAGRANT_BOX_URL="http://repo/my-box.box"
-$ export VAGRANT_VM_CPUS=5
-$ export VAGRANT_VM_MEMORY=5120
-$ export VAGRANT_DATA_DISK_USAGE=true
-$ VAGRANT_DATA_DISK_SIZE_MB=10240
-# Vagrant using Virtualbox
-$ make vagrant-vbox
-$ make vagrant-destroy
-```
+Not implemented yet.
 
 ## License
 
