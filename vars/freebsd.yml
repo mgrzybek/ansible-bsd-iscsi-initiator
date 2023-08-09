@@ -1,0 +1,9 @@
+sysctl_values:
+- name: vfs.zfs.vol.mode
+  value: 2
+- name: kern.iscsi.login_timeout
+  value: 10
+- name: kern.iscsi.ping_timeout
+  value: 5
+- name: kern.iscsi.fail_on_disconnection
+  value : 1

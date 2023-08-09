@@ -1,0 +1,17 @@
+---
+
+- name: Install | Create directories
+  with_items:
+  - /usr/local/etc/devd
+  file:
+    path: "{{ item }}"
+    state: directory
+
+- name: Install | Copy scripts
+  with_items:
+  - carp-zpool-attach.sh
+  - carp-zpool-detach.sh
+  copy:
+    src: "sbin/{{ item }}"
+    dest: /usr/local/sbin
+    mode: 0755

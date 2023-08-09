@@ -1,0 +1,90 @@
+---
+
+- name: Post-Install | Configure devd
+  notify: restart devd
+  with_items:
+  - zpool.conf
+  copy:
+    src: "etc/{{ item }}"
+    dest: /usr/local/etc/devd
+    mode: 0755
+
+- name: Post-Install | Configure devd for CARP
+  when: configure_carp is true
+  notify:
+  - restart devd
+  - start netif
+  with_items:
+  - carp.conf
+  copy:
+    src: "etc/{{ item }}"
+    dest: /usr/local/etc/devd
+    mode: 0755
+  
+- name: Post-Install | Set kernel values
+  notify: set live sysctl
+  with_items: "{{ sysctl_values }}"
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+
+- name: Post-Install | Set sysrc values
+  with_items:
+  - name: iscsid_enable
+    value: "YES" 
+  - name: iscsictl_enable
+    value: "YES"
+  - name: iscsictl_flags
+    value: "-Aa"
+  - name: iscsid_enable
+    value: "YES"
+  - name: iscsictl_enable
+    value: "YES"
+  community.general.system.sysrc:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+
+- name: Post-Install | Set sysrc values for CARP
+  when: configure_carp is true
+  with_items:
+  - name: ifconfig_{{ bsd_iscsi_initiator.carp.iface }}_alias0
+    value: "vhid {{ bsd_iscsi_initiator.carp.vhid }} pass {{ bsd_iscsi_initiator.carp.secret }} alias {{ bsd_iscsi_initiator.carp.ip_cidr }}"
+  community.general.system.sysrc:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+
+- name: Post-Install | Set loader.conf values
+  notify: load carp module
+  with_items:
+  - name: carp_load
+    value: "YES"
+  community.general.system.sysrc:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    path: /boot/loader.conf
+    state: present
+
+- name: Post-Install | Configure iscsid
+  notify: reload iscsictl
+  template:
+    src: iscsid.conf.j2
+    dest: /etc/iscsi.conf
+    mode: 600
+
+- name: Post-Install | Start services
+  with_items:
+  - iscsid
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+
+- name: Post-Install | Consul service definition
+  when:
+  - configure_consul | lower == 'true'
+  notify: reload consul
+  template: src=service.consul.json.j2 dest={{ bsd_iscsi_initiator_consul_services_path }}/{{ item.service.name }}.json
+  with_items: "{{ bsd_iscsi_initiator_consul }}"

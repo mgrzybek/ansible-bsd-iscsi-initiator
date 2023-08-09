@@ -1,0 +1,6 @@
+{% for lun in bsd_iscsi_initiator.luns %}
+{{ lun.name }} {
+	TargetAddress	= {{ lun.target.addr }}
+	TargetName	= {{ lun.target.iqn }}
+}
+{% endfor %}
