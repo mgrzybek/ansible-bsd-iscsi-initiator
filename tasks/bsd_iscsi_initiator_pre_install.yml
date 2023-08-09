@@ -1,5 +1,3 @@
----
-
 - name: Pre-Install | Set default facts
   set_fact:
     use_firewalld: false
@@ -16,31 +14,31 @@
 
 - name: Pre-Install | Check Consul configuration
   when:
-    - bsd_iscsi_initiator_config_consul | lower == 'true'
-    - not (ansible_facts.services | map('quote') | join(',') | regex_search('consul'))
+  - bsd_iscsi_initiator_config_consul | lower == 'true'
+  - not (ansible_facts.services | map('quote') | join(',') | regex_search('consul'))
   fail: msg="Consul service not found - Cannot configure it"
 
 - name: Pre-Install | Check cluster configuration
   when:
-    - bsd_iscsi_initiator_cluster_aware | lower == 'true'
-    - not (ansible_facts.services | map('quote') | join(',') | regex_search('pacemaker'))
+  - bsd_iscsi_initiator_cluster_aware | lower == 'true'
+  - not (ansible_facts.services | map('quote') | join(',') | regex_search('pacemaker'))
   fail: msg="Pacemaker service not found - Cannot configure it"
 
 - name: Pre-Install | Get Consul facts
   when:
-    - bsd_iscsi_initiator_config_consul | lower == 'true'
-    - ansible_facts.services | map('quote') | join(',') | regex_search('consul')
+  - bsd_iscsi_initiator_config_consul | lower == 'true'
+  - ansible_facts.services | map('quote') | join(',') | regex_search('consul')
   set_fact:
     configure_consul: true
 
 - name: Pre-Install | Cluster-aware facts
   when: bsd_iscsi_initiator_cluster_aware | lower == 'true'
   block:
-    - name: Pre-Install | Get crm node name
-      command: crm_node -n
-      changed_when: False
-      register: crm_result
+  - name: Pre-Install | Get crm node name
+    command: crm_node -n
+    changed_when: false
+    register: crm_result
 
-    - name: Pre-Install | Set cluster facts
-      set_fact:
-        crm_node_name: "{{ crm_result.stdout }}"
+  - name: Pre-Install | Set cluster facts
+    set_fact:
+      crm_node_name: '{{ crm_result.stdout }}'

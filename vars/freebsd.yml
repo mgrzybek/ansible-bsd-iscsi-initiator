@@ -6,4 +6,4 @@ sysctl_values:
 - name: kern.iscsi.ping_timeout
   value: 5
 - name: kern.iscsi.fail_on_disconnection
-  value : 1
+  value: 1

@@ -1,12 +1,10 @@
----
-
 - name: restart devd
   service:
     name: devd
     state: restarted
 
 - name: reload iscsictl
-  command: "{{ item }}"
+  command: '{{ item }}'
   with_items:
   - iscsictl -Ra
   - iscsictl -Aa
@@ -17,7 +15,7 @@
     state: started
 
 - name: set live sysctl
-  with_items: "{{ sysctl_values }}"
+  with_items: '{{ sysctl_values }}'
   command: sysctl {{ item.name }} {{ item.value }}
 
 - name: load carp module
@@ -26,9 +24,9 @@
 - name: restart bsd_iscsi_initiator service
   service: name=bsd_iscsi_initiator state=restarted enabled=yes
   when:
-    - bsd_iscsi_initiator_post_config_restart_on_change | lower == 'true'
-    - bsd_iscsi_initiator_cluster_aware | lower == 'false'
-    - bsd_iscsi_initiator_use_docker | lower == 'false'
+  - bsd_iscsi_initiator_post_config_restart_on_change | lower == 'true'
+  - bsd_iscsi_initiator_cluster_aware | lower == 'false'
+  - bsd_iscsi_initiator_use_docker | lower == 'false'
 
 - name: restart bsd_iscsi_initiator resource
   shell: >
@@ -37,8 +35,8 @@
     {{ bsd_iscsi_initiator_cluster_command }} resource manage {{ bsd_iscsi_initiator_cluster_resource_name }} && \
     {{ bsd_iscsi_initiator_cluster_command }} resource enable {{ bsd_iscsi_initiator_cluster_resource_name }}"
   when:
-    - bsd_iscsi_initiator_post_config_restart_on_change | lower == 'true'
-    - bsd_iscsi_initiator_cluster_aware | lower == 'true'
+  - bsd_iscsi_initiator_post_config_restart_on_change | lower == 'true'
+  - bsd_iscsi_initiator_cluster_aware | lower == 'true'
 
 - name: reload consul
   command: consul reload

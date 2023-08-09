@@ -1,5 +1,3 @@
----
-
 bsd_iscsi_initiator_cluster_aware: false
 bsd_iscsi_initiator_cluster_resource_name:
 
@@ -7,13 +5,13 @@ bsd_iscsi_initiator_config_consul: false
 bsd_iscsi_initiator_consul_services_path: /usr/local//etc/consul.d
 bsd_iscsi_initiator_consul:
 - service:
-  name: "iscsid"
+  name: iscsid
   tags:
-  - "iscsi"
-  - "initiator"
+  - iscsi
+  - initiator
   checks:
   - args:
-    - "service"
-    - "iscsid"
-    - "status"
-    interval: "60s"
+    - service
+    - iscsid
+    - status
+    interval: 60s
